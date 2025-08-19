@@ -4,14 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Happy Birthday!</title>
-    <!-- Use a fun, readable font from Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Poppins:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --lavender-light: #e6e6fa;
-            --lavender-dark: #b57edc;
+            --envelope-color: #ffb3c1;
+            --flap-color: #ff9aa2;
+            --button-color: #f9d5e5;
+            --message-bg: #e291a2; /* Updated to a slightly darker pink */
             --ribbon-color: #ff9aa2;
             --confetti-colors: #f9d5e5, #ff9aa2, #ffb7b2, #ffdac1, #e2f0cb, #b5ead7, #c7ceea;
         }
@@ -25,6 +26,8 @@
             font-family: 'Poppins', sans-serif;
             margin: 0;
             overflow: hidden;
+            flex-direction: column;
+            position: relative;
         }
 
         .container {
@@ -34,89 +37,113 @@
             align-items: center;
             position: relative;
             cursor: pointer;
-            perspective: 1000px;
+            z-index: 10;
         }
-
+        
+        /* The main envelope body */
         .envelope-wrapper {
             position: relative;
-            width: 400px;
-            height: 250px;
+            width: 500px; /* Increased size */
+            height: 300px; /* Increased size */
             z-index: 10;
-            transform-style: preserve-3d;
-            transition: transform 1s ease-in-out;
-        }
-
-        .open .envelope-wrapper {
-            transform: rotateX(180deg);
-        }
-
-        .envelope-front {
-            background-color: #ffb3c1;
-            width: 100%;
-            height: 100%;
-            position: absolute;
-            border-radius: 15px;
-            backface-visibility: hidden;
-            display: flex;
-            justify-content: center;
-            align-items: center;
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
-        }
-
-        .envelope-back {
-            background-color: #ffb3c1;
-            width: 100%;
-            height: 100%;
-            position: absolute;
             border-radius: 15px;
-            transform: rotateX(180deg);
-            backface-visibility: hidden;
-            display: flex;
-            flex-direction: column; /* Changed to column for better message layout */
-            justify-content: center;
-            align-items: center;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
-            padding: 40px;
-            box-sizing: border-box;
-            text-align: center;
-            color: #333;
+            background-color: var(--envelope-color);
+            overflow: hidden; 
+            transform: translateY(0);
+            transition: transform 0.8s ease-in-out;
         }
 
-        .envelope-front::before {
-            content: '';
+        /* The movable flap */
+        .envelope-flap {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
-            height: 100%;
-            background-image:
-                url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='%23e88fa7' d='M0 0h100v100H0z'/%3E%3Cpath fill='%23ffb3c1' d='M50 0L100 50V0zM0 0v50L50 0z'/%3E%3Cpath fill='%23ff9aa2' d='M0 100L100 0H0z'/%3E%3C/svg%3E"),
-                url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23e88fa7' d='M12 2a10 10 0 100 20 10 10 0 000-20zm0 18a8 8 0 110-16 8 8 0 010 16z'/%3E%3Cpath fill='%23ffb3c1' d='M15 10a3 3 0 11-6 0 3 3 0 016 0z'/%3E%3Cpath fill='%23ff9aa2' d='M12 7a5 5 0 100 10 5 5 0 000-10z'/%3E%3C/svg%3E");
-            background-size: 50% 50%, 25% 25%;
-            background-position: top left, center;
-            background-repeat: no-repeat;
-            opacity: 0.15;
-            z-index: -1;
-            border-radius: 15px;
+            height: 50%;
+            z-index: 2;
+            transform-origin: top;
+            transform: rotateX(0deg);
+            transition: transform 0.8s ease-in-out;
+            background-color: var(--flap-color);
+            border-top-left-radius: 15px;
+            border-top-right-radius: 15px;
+            clip-path: polygon(0% 0%, 100% 0%, 50% 100%);
         }
 
+        .envelope-flap::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 50%;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            background-color: var(--button-color);
+            transform: translateX(-50%);
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        /* The hidden letter inside the envelope */
+        .letter {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 80%;
+            height: 90%;
+            background-color: var(--message-bg); 
+            border-radius: 10px;
+            transform: translate(-50%, 100%);
+            transition: transform 0.8s ease-in-out;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            padding: 20px;
+            box-sizing: border-box;
+            text-align: center;
+        }
+
+        .letter-content {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.1em;
+            color: #4a4a4a;
+            line-height: 1.6;
+            margin-top: 15px;
+        }
+        
+        .letter h2 {
+            font-family: 'Pacifico', cursive;
+            font-size: 1.8em;
+            color: var(--flap-color);
+        }
+
+        /* Animations when the envelope is open */
+        .container.open .envelope-wrapper {
+            transform: translateY(-50px);
+        }
+
+        .container.open .envelope-flap {
+            transform: rotateX(180deg);
+        }
+
+        .container.open .letter {
+            transform: translate(-50%, -50%);
+        }
+
+        /* Party hat and balloons */
         .party-hat {
             position: absolute;
-            top: -40px; /* Moved up to not obstruct the text */
+            top: -40px;
             left: 50%;
             transform: translateX(-50%) rotate(0deg);
             width: 0;
             height: 0;
             border-left: 30px solid transparent;
             border-right: 30px solid transparent;
-            /* Use a gradient to create a striped pattern */
             border-bottom: 60px solid #ff9aa2;
             z-index: 10;
             transition: transform 0.5s ease-out;
             animation: bounce 0.8s ease-in-out infinite alternate;
         }
         
-        /* Add a striped background to the party hat */
         .party-hat::before {
             content: '';
             position: absolute;
@@ -142,7 +169,7 @@
         }
 
         .party-hat::after {
-            content: '🥳'; /* Use a celebratory emoji for the puffball */
+            content: '🥳';
             position: absolute;
             bottom: 45px;
             left: -15px;
@@ -186,41 +213,6 @@
             transform-origin: bottom right;
             transform: rotate(15deg);
             animation-delay: -1.5s;
-        }
-
-        .ribbon-left, .ribbon-right {
-            content: '';
-            position: absolute;
-            width: 120px;
-            height: 15px;
-            background-color: var(--ribbon-color);
-            border-radius: 5px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-        .ribbon-left {
-            top: 20%;
-            left: -50px;
-            transform: rotate(-30deg);
-        }
-        .ribbon-right {
-            top: 60%;
-            right: -50px;
-            transform: rotate(30deg);
-        }
-
-        .message {
-            font-family: 'Pacifico', cursive;
-            font-size: 1.5em;
-            color: var(--pink-dark);
-            text-shadow: 2px 2px 5px rgba(0,0,0,0.1);
-        }
-
-        .message-content {
-            font-family: 'Poppins', sans-serif;
-            font-size: 1.2em;
-            color: #4a4a4a;
-            line-height: 1.6;
-            margin-top: 15px;
         }
 
         .confetti-piece {
@@ -267,14 +259,10 @@
 
 <div class="container" onclick="toggleEnvelope()">
     <div class="envelope-wrapper" id="envelope">
-        <div class="envelope-front">
-            <span class="message" id="message-text">Click to Open!</span>
-            <div class="ribbon-left"></div>
-            <div class="ribbon-right"></div>
-        </div>
-        <div class="envelope-back">
-            <h2 style="font-family: 'Pacifico', cursive; font-size: 2em; color: var(--pink-dark);">Happy Birthday Arriana!</h2>
-            <p class="message-content">I wish you a great and a Happy Birthday, I hope you enjoy your day to the fullest.</p>
+        <div class="envelope-flap"></div>
+        <div class="letter">
+            <h2>Happy Birthday Arriana!</h2>
+            <p class="letter-content">I wish you a great and a Happy Birthday, I hope you enjoy your day to the fullest.</p>
         </div>
     </div>
     <div class="party-hat"></div>
@@ -285,14 +273,10 @@
 <script>
     function toggleEnvelope() {
         const container = document.querySelector('.container');
-        const messageText = document.getElementById('message-text');
-        
         if (container.classList.contains('open')) {
             container.classList.remove('open');
-            messageText.innerText = "Click to Open!";
         } else {
             container.classList.add('open');
-            messageText.innerText = "Click to Close";
             createConfetti();
         }
     }
