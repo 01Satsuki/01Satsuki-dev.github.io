@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday!</title>
+    <!-- Use a fun, readable font from Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Poppins:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --lavender-light: #e6e6fa;
+            --lavender-dark: #b57edc;
+            --ribbon-color: #ff9aa2;
+            --confetti-colors: #f9d5e5, #ff9aa2, #ffb7b2, #ffdac1, #e2f0cb, #b5ead7, #c7ceea;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: var(--lavender-light);
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            cursor: pointer;
+            perspective: 1000px;
+        }
+
+        .envelope-wrapper {
+            position: relative;
+            width: 400px;
+            height: 250px;
+            z-index: 10;
+            transform-style: preserve-3d;
+            transition: transform 1s ease-in-out;
+        }
+
+        .open .envelope-wrapper {
+            transform: rotateX(180deg);
+        }
+
+        .envelope-front {
+            background-color: #ffb3c1;
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            border-radius: 15px;
+            backface-visibility: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .envelope-back {
+            background-color: #ffb3c1;
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            border-radius: 15px;
+            transform: rotateX(180deg);
+            backface-visibility: hidden;
+            display: flex;
+            flex-direction: column; /* Changed to column for better message layout */
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+            padding: 40px;
+            box-sizing: border-box;
+            text-align: center;
+            color: #333;
+        }
+
+        .envelope-front::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image:
+                url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='%23e88fa7' d='M0 0h100v100H0z'/%3E%3Cpath fill='%23ffb3c1' d='M50 0L100 50V0zM0 0v50L50 0z'/%3E%3Cpath fill='%23ff9aa2' d='M0 100L100 0H0z'/%3E%3C/svg%3E"),
+                url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23e88fa7' d='M12 2a10 10 0 100 20 10 10 0 000-20zm0 18a8 8 0 110-16 8 8 0 010 16z'/%3E%3Cpath fill='%23ffb3c1' d='M15 10a3 3 0 11-6 0 3 3 0 016 0z'/%3E%3Cpath fill='%23ff9aa2' d='M12 7a5 5 0 100 10 5 5 0 000-10z'/%3E%3C/svg%3E");
+            background-size: 50% 50%, 25% 25%;
+            background-position: top left, center;
+            background-repeat: no-repeat;
+            opacity: 0.15;
+            z-index: -1;
+            border-radius: 15px;
+        }
+
+        .party-hat {
+            position: absolute;
+            top: -40px; /* Moved up to not obstruct the text */
+            left: 50%;
+            transform: translateX(-50%) rotate(0deg);
+            width: 0;
+            height: 0;
+            border-left: 30px solid transparent;
+            border-right: 30px solid transparent;
+            /* Use a gradient to create a striped pattern */
+            border-bottom: 60px solid #ff9aa2;
+            z-index: 10;
+            transition: transform 0.5s ease-out;
+            animation: bounce 0.8s ease-in-out infinite alternate;
+        }
+        
+        /* Add a striped background to the party hat */
+        .party-hat::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -30px;
+            width: 60px;
+            height: 60px;
+            background-image: repeating-linear-gradient(
+                -45deg,
+                #ffb3c1,
+                #ffb3c1 5px,
+                #ffdac1 5px,
+                #ffdac1 10px
+            );
+            clip-path: polygon(50% 0, 100% 100%, 0 100%);
+            transform: rotate(0deg) translateY(0);
+            transform-origin: bottom center;
+        }
+        
+        .open .party-hat {
+            transform: translateX(-50%) rotate(10deg);
+            animation-play-state: paused;
+        }
+
+        .party-hat::after {
+            content: '�'; /* Use a celebratory emoji for the puffball */
+            position: absolute;
+            bottom: 45px;
+            left: -15px;
+            font-size: 30px;
+            animation: float 2s ease-in-out infinite alternate;
+        }
+
+        .balloon {
+            position: absolute;
+            width: 50px;
+            height: 65px;
+            border-radius: 50%;
+            z-index: 5;
+            animation: float 3s ease-in-out infinite alternate;
+        }
+
+        .balloon::after {
+            content: '';
+            position: absolute;
+            top: 90%;
+            left: 50%;
+            width: 2px;
+            height: 40px;
+            background-color: #555;
+            transform: translateX(-50%);
+        }
+
+        .balloon.left {
+            top: 25%;
+            left: -70px;
+            background-color: #ffb7b2;
+            transform-origin: bottom left;
+            transform: rotate(-10deg);
+            animation-delay: -0.5s;
+        }
+
+        .balloon.right {
+            top: 50%;
+            right: -70px;
+            background-color: #b5ead7;
+            transform-origin: bottom right;
+            transform: rotate(15deg);
+            animation-delay: -1.5s;
+        }
+
+        .ribbon-left, .ribbon-right {
+            content: '';
+            position: absolute;
+            width: 120px;
+            height: 15px;
+            background-color: var(--ribbon-color);
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .ribbon-left {
+            top: 20%;
+            left: -50px;
+            transform: rotate(-30deg);
+        }
+        .ribbon-right {
+            top: 60%;
+            right: -50px;
+            transform: rotate(30deg);
+        }
+
+        .message {
+            font-family: 'Pacifico', cursive;
+            font-size: 1.5em;
+            color: var(--pink-dark);
+            text-shadow: 2px 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .message-content {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.2em;
+            color: #4a4a4a;
+            line-height: 1.6;
+            margin-top: 15px;
+        }
+
+        .confetti-piece {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: var(--confetti-colors);
+            border-radius: 50%;
+            opacity: 0;
+            animation: fall 3s ease-in forwards;
+        }
+
+        @keyframes fall {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(720deg);
+                opacity: 0.8;
+            }
+        }
+
+        @keyframes bounce {
+            from {
+                transform: translateX(-50%) rotate(0deg) scale(1);
+            }
+            to {
+                transform: translateX(-50%) rotate(-5deg) scale(1.05);
+            }
+        }
+
+        @keyframes float {
+            from {
+                transform: translateY(0);
+            }
+            to {
+                transform: translateY(-10px);
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container" onclick="toggleEnvelope()">
+    <div class="envelope-wrapper" id="envelope">
+        <div class="envelope-front">
+            <span class="message" id="message-text">Click to Open!</span>
+            <div class="ribbon-left"></div>
+            <div class="ribbon-right"></div>
+        </div>
+        <div class="envelope-back">
+            <h2 style="font-family: 'Pacifico', cursive; font-size: 2em; color: var(--pink-dark);">Happy Birthday Arriana!</h2>
+            <p class="message-content">I wish you a great and a Happy Birthday, I hope you enjoy your day to the fullest.</p>
+        </div>
+    </div>
+    <div class="party-hat"></div>
+    <div class="balloon left"></div>
+    <div class="balloon right"></div>
+</div>
+
+<script>
+    function toggleEnvelope() {
+        const container = document.querySelector('.container');
+        const messageText = document.getElementById('message-text');
+        
+        if (container.classList.contains('open')) {
+            container.classList.remove('open');
+            messageText.innerText = "Click to Open!";
+        } else {
+            container.classList.add('open');
+            messageText.innerText = "Click to Close";
+            createConfetti();
+        }
+    }
+
+    function createConfetti() {
+        const confettiCount = 50;
+        const container = document.body;
+        const colors = ['#f9d5e5', '#ff9aa2', '#ffb7b2', '#ffdac1', '#e2f0cb', '#b5ead7', '#c7ceea'];
+
+        // Remove old confetti to prevent clutter
+        document.querySelectorAll('.confetti-piece').forEach(c => c.remove());
+
+        for (let i = 0; i < confettiCount; i++) {
+            const confetti = document.createElement('div');
+            confetti.classList.add('confetti-piece');
+            confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+            confetti.style.left = `${Math.random() * 100}vw`;
+            confetti.style.animationDelay = `${Math.random() * 2}s`;
+            confetti.style.animationDuration = `${3 + Math.random() * 2}s`;
+            container.appendChild(confetti);
+        }
+    }
+</script>
+
+</body>
+</html>
+�
