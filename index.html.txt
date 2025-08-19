@@ -142,7 +142,7 @@
         }
 
         .party-hat::after {
-            content: '�'; /* Use a celebratory emoji for the puffball */
+            content: '🥳'; /* Use a celebratory emoji for the puffball */
             position: absolute;
             bottom: 45px;
             left: -15px;
@@ -319,4 +319,3 @@
 
 </body>
 </html>
-�
